@@ -91,7 +91,6 @@ void WorkThread::run()
 
 			response = "Eintrag hinzugefuegt";
 
-			lock_guard<mutex> guard(telefonbuchMutex);
 			daten->eintragEinfuegen(new Eintrag(name, number));
 		}
 

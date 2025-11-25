@@ -1,6 +1,7 @@
 #pragma once
 #include "ServerSocket.hpp"
 #include "Telefonbuch.h"
+#include "WorkThread.h"
 #include <vector>
 
 // 2.5 Aufgabe
@@ -10,6 +11,7 @@ private:
 	ServerSocket *server;
 	Telefonbuch *daten;
 	vector<WorkThread*> threads;
+	string dateiname = "./telefonbuch.csv";
 
 public:
 	void start();

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 
 #include "TelefonbuchServer.h"
 #include "Thread.h"
@@ -34,17 +35,35 @@ void TelefonbuchServer::start()
 
     int nummer = 1;
 
+    
+ 
+    cout << "Load Test 1" << endl;
+    daten->loadCSV(dateiname);
+    cout << "Load Test 2" << endl;
+
+
     while (true)
     {
         cout << "\n(" << nummer << ") Warten auf Client ..." << endl;
 
-        Socket* s = server->accept(); 
+
+        if (nummer > 1)
+        {
+            break;
+        }
+
+        Socket* s = server->accept();
+
+        if (s != nullptr)
+        {
+            nummer++;
+        }
+
         WorkThread* work = new WorkThread(s, daten);
 
         threads.push_back(work);
 
         work->start(); 
-        nummer++;
 
      
          
@@ -107,6 +126,11 @@ void TelefonbuchServer::start()
     }
 
     server->close();
+
+    cout << "Save Test 1" << endl;
+    daten->saveCSV(dateiname);    
+    cout << "Save Test 2" << endl;
+
     cout << "Server Geschlossen" << endl;
     
 }

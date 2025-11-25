@@ -2,6 +2,7 @@
 #include "Eintrag.h"
 #include <iostream>
 #include <algorithm>  // für std::sort
+#include <filesystem>
 using namespace std;
 
 // --- Konstruktoren ---
@@ -114,6 +115,45 @@ void Telefonbuch::toString()
         std::cout << elem->getName() << " " << elem->getNr() << std::endl;
     }
     cout << endl;
+}
+
+void Telefonbuch::saveCSV(string dateiname)
+{
+
+    //cout << "Arbeitsverzeichnis: " << std::filesystem::current_path() << endl;
+    
+    lock_guard<mutex> lock(telMutex);
+    ofstream datei(dateiname); // NEU erstellen/überschreiben
+    if (!datei.is_open()) {
+        cout << "Fehler beim Öffnen der Datei: " << dateiname << endl;
+        return;
+    }
+
+    for (Eintrag* e : telefonbuchEintraege)
+    {
+        datei << e->getName() << "," << e->getNr() << "\n";
+    }
+}
+
+void Telefonbuch::loadCSV(string dateiname)
+{
+    telefonbuchEintraege.clear();
+
+    lock_guard<mutex> lock(telMutex);
+    ifstream datei(dateiname);
+    if (!datei.is_open()) return;
+
+    string zeile;
+    while (getline(datei, zeile)) {
+        stringstream ss(zeile);
+        string name, nummer;
+        if (getline(ss, name, ',') && getline(ss, nummer, ','))
+        {
+            telefonbuchEintraege.push_back(new Eintrag(name, nummer));
+        }
+    }
+
+    datei.close();
 }
 
 

@@ -3,6 +3,8 @@
 #include "List.h"
 
 #include <mutex>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -15,6 +17,8 @@ private:
 	int maxAnzahlEintraege;
 	list <Eintrag*>telefonbuchEintraege; 
 	int anzahlEintraege;
+	mutex telMutex;
+
 
 	
 
@@ -25,6 +29,12 @@ public:
 	list<Eintrag*>& getTelefonbuchEintraege();
 	void sortierenNachNamen();
 	void toString();
+
+	void saveCSV(string dateiname);
+	void loadCSV(string dateiname);
+
+
+
 	Telefonbuch();
 	Telefonbuch(int);
 	~Telefonbuch();
