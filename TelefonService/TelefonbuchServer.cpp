@@ -33,7 +33,8 @@ void TelefonbuchServer::start()
 
     cout << "start() ist ausgeführt 1" << endl;
 
-    int nummer = 1;
+    int currentConnected = 1;
+    int overallConnected = 0;
 
     
  
@@ -44,21 +45,26 @@ void TelefonbuchServer::start()
 
     while (true)
     {
-        cout << "\n(" << nummer << ") Warten auf Client ..." << endl;
+        cout << "Warten auf Client ..." << endl;
 
-
+        if(currentConnected >= 3)
+        {
+            cout << "Aktuell zu viele Nutzer" << endl;
+            
+            
+        }
 
         Socket* s = server->accept();
 
-        if (s != nullptr)
-        {
-            nummer++;
-        }
-
-        if (nummer > 3)
-        {
-            break;
-        }
+       // if (s != nullptr)
+       // {
+       //     nummer++;
+       // }
+       //
+       // if (nummer > 3)
+       // {
+       //     break;
+       // }
 
         WorkThread* work = new WorkThread(s, daten);
 
@@ -124,6 +130,7 @@ void TelefonbuchServer::start()
     {
         w->join();
         delete w;
+        
     }
 
     server->close();
