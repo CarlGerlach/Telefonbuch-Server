@@ -1,26 +1,22 @@
 #include "workThread.h"
 #include "Eintrag.h"
 
+int WorkThread::id = 0;
+
 WorkThread::WorkThread(Socket* s, Telefonbuch* d)
 {
 	this->sock = s;
 	this->daten = d;
+	id++;
 }
 
 void WorkThread::run()
 {
-	
+	cout << "Thread: " << id << " läuft" << endl;
+
 	while (!stopRequestedFlag())
 	{
-		while (!sock->dataAvailable())
-		{
-			if (stopRequestedFlag())
-			{
-				//sock->close();
-				//delete sock;
-				break;
-			}
-		}
+		if (!sock->dataAvailable())	continue;
 
 		//cout << "Test1" << endl;
 		
@@ -29,14 +25,18 @@ void WorkThread::run()
 		//request scheme -> [REQUEST];[NAME];[NUMBER]
 		string text = sock->readLine();
 
+		cout << "Anfrage: " << text << endl;
+
 		//REQUEST
 		string request = text.substr(0, text.find(" "));
 		text = text.substr(text.find(" ") + 1);
 
 
-		if (request == "EXIT")
+		if (request == "EXIT" || text[0] == '\0')
 		{
+			cout << "Theoretisch schleife beendet" << endl;
 			break;
+
 		}
 
 
@@ -89,13 +89,15 @@ void WorkThread::run()
 
 			cout << "Eintrag hinzugefuegt" << endl;
 
-			response = "Eintrag hinzugefuegt";
-
+			lock_guard guard(tMutex);
 			daten->eintragEinfuegen(new Eintrag(name, number));
+			response = "Eintrag hinzugefuegt";
+			Sleep(10000);
 		}
 
 		else if (request == "DELETE")
 		{
+			lock_guard guard(tMutex);
 			daten->eintragLoeschen(name);
 			cout << "Eintrag gelöscht" << endl;
 
@@ -119,16 +121,17 @@ void WorkThread::run()
 
 
 		//Sleep(10000);
-		cout << "Thread läuft" << endl;
+		
 	}
 
 	//cout << "Test4" << endl;
 
+	
 	sock->close();
 	delete sock;
-	cout << "Socket geschlossen" << endl;
-	
-
+	cout << "Socket geschlossen" << endl;									
+	cout << "Thread: " << id << " geloescht" << endl;
+	//delete this;	 //Löschen des threads
 }
 
 

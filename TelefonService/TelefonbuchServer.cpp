@@ -47,16 +47,17 @@ void TelefonbuchServer::start()
         cout << "\n(" << nummer << ") Warten auf Client ..." << endl;
 
 
-        if (nummer > 1)
-        {
-            break;
-        }
 
         Socket* s = server->accept();
 
         if (s != nullptr)
         {
             nummer++;
+        }
+
+        if (nummer > 3)
+        {
+            break;
         }
 
         WorkThread* work = new WorkThread(s, daten);
